@@ -1,4 +1,4 @@
-from .forms import RegistrationForm, UpdateProfileForm, UserCreationForm
+from .forms import RegistrationForm, UserCreationForm
 
 from django.shortcuts import render, reverse
 from django.contrib import messages
@@ -7,19 +7,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime
 import logging
 
+from .models import Items
+
 logger = logging.getLogger('__name__')
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def register(request):
     if request.method == 'GET':
         logger.info('Get request to register page')
         form = RegistrationForm()
-        return render(request, template_name='effort_tracker/register.html', context={'form': form})
+        return render(request, template_name='fridgeApp/register.html', context={'form': form})
     elif request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -32,68 +32,9 @@ def register(request):
             return HttpResponseRedirect(redirect_to=reverse('register'))
 
 
-def profile(request):
-    if request.user.is_authenticated:
-        try:
-            curr_exp = "{:.1f} yr".format(float(request.user.profile.joining_exp) + float(
-                ((datetime.now().date() - request.user.profile.site_joining_date).days / 30) / 12))
-        except Exception as e:
-            curr_exp = 0.0
-
-        try:
-            if request.user.profile.display_pic.url == '/media/False':
-                display_pic = "/static/dpp.jpg"
-            else:
-                display_pic = request.user.profile.display_pic.url
-        except ValueError:
-            display_pic = "/static/dpp.jpg"
-
-        print("@@@@@", display_pic)
-        return render(request, template_name='effort_tracker/profile.html',
-                      context={'user': request.user, 'curr_exp': curr_exp, 'display_pic': display_pic})
-    else:
-        messages.warning(request, 'First login to view your profile')
-        return HttpResponseRedirect(redirect_to=reverse('login'))
-
-
-def update_profile(request):
-    if request.user.is_authenticated and request.method == "GET":
-        form = UpdateProfileForm(instance=request.user.profile,
-                                 initial={'name': (request.user.first_name + " " + request.user.last_name),
-                                          'site_joining_date': request.user.profile.site_joining_date,
-                                          'joining_exp': request.user.profile.joining_exp,
-                                          })
-        context = {
-            "form": form
-        }
-        return render(request, template_name="effort_tracker/update_profile.html", context=context)
-
-    elif request.user.is_authenticated and request.method == "POST":
-        form = UpdateProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            print("****************", bool(request.user.profile.display_pic) == False)
-            if form.cleaned_data["display_pic"] is None and request.user.profile.display_pic.url == "/media/False":
-                print("DP none true", request.user.profile.display_pic.url)
-                form.cleaned_data["display_pic"] = request.user.profile.display_pic.url
-
-            form.cleaned_data["joining_exp"] = request.user.profile.joining_exp
-            form.cleaned_data["site_joining_date"] = request.user.profile.site_joining_date
-            obj = form.save(commit=False)
-            obj.user = request.user
-            obj.save()
-            logger.info("task updated")
-            logger.info("Profile update for - {}".format(request.user.username))
-            messages.info(request, "Profile details update")
-            return HttpResponseRedirect(redirect_to=reverse("profile"))
-
-        else:
-            messages.error(request, "error in form")
-            return HttpResponseRedirect(redirect_to=reverse("update_profile"))
-
-
 def password_reset(request):
     if request.method == "GET":
-        return render(request, template_name="effort_tracker/password_reset.html")
+        return render(request, template_name="fridgeApp/password_reset.html")
     if request.method == "POST":
         username = request.POST.get('username')
         old_password = request.POST.get('old_password')
@@ -127,7 +68,7 @@ def add_user(request):
             "form": form,
         }
 
-        return render(request, template_name="effort_tracker/add_user.html", context=context)
+        return render(request, template_name="fridgeApp/add_user.html", context=context)
 
     elif request.method == "POST":
         print(request.POST)
@@ -153,3 +94,12 @@ def add_user(request):
         else:
             messages.error(request, "Password1 and password2 does not match, please try again")
             return HttpResponseRedirect(reverse('add_user'))
+
+
+def list_all_items(request):
+    if request.method == "GET":
+        context = {
+            "items": Items.objects.all()
+        }
+
+        return render(request, template_name="fridgeApp/list_items.html", context=context)

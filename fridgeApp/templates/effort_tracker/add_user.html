@@ -1,0 +1,100 @@
+{% extends "effort_tracker/base.html" %}
+{% block content %}
+<style>
+    table tr td {
+        padding: 5px;
+    }
+    .hide{
+    display:none;
+    }
+
+    .show{
+    display:block;
+    }
+
+</style>
+
+<script>
+    function display_associate_fields(id){
+        if (document.getElementById(id).className === "show"){
+        document.getElementById(id).className = "hide"
+      }
+      else if (document.getElementById(id).className === "hide"){
+        document.getElementById(id).className = "show"
+      }
+
+      document.getElementById(disable_id1).className = "hide"
+    }
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10">
+        </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'profile' %}"><h5> profile </h5> </a>
+        </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'logout' %}"><h5> logout </h5> </a>
+        </div>
+    </div>
+    <center><h4> Add New Associate  </h4></center>
+    <hr>
+
+    {% if messages %}
+    <ul class="messages">
+          {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}<p class="text-danger" >Warning: </p>{% endif %}
+                    <center>{{ message }}</center>
+                </li>
+          {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div>
+        <form action="/add_user/" method="POST">
+            {% csrf_token %}
+        <center>
+            <table>
+                <tr>
+                    <td> <label>  Username: </label></td>
+                    <td> {{form.username}} </td>
+                </tr>
+                <tr>
+                    <td> <label>  Email: </label></td>
+                    <td> <input type="email" name="email"> </td>
+                </tr>
+                <tr>
+                    <td> <label>  Password: </label></td>
+                    <td> {{form.password1}} </td>
+                </tr>
+                <tr>
+                    <td> <label>  Confirm Password: </label></td>
+                    <td> {{form.password2}} </td>
+                </tr>
+            </table>
+            <br>
+            <input type="radio" id="ba" name="account_type" value="Bosch Associate" onclick="display_associate_fields('associate_fields')">  Bosch Associate  &nbsp&nbsp
+            <input type="radio" id="stl" name="account_type" value="SITE Team Lead">  SITE Team Lead
+            <br>
+            <div id="associate_fields" class="hide">
+                <table>
+                    <tr>
+                        <td><label> Bosch Joining Date </label></td>
+                        <td><input type="date" name="bjd"></td>
+                    </tr>
+                    <tr>
+                        <td><label> Experiance As On Joining Date  </label></td>
+                        <td><input type="decimal" name="ejd"></td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <input type="submit" value="submit">
+        </center>
+        </form>
+    </div>
+</div>
+{% endblock %}

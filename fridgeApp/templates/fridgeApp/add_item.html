@@ -1,0 +1,56 @@
+{% extends "fridgeApp/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    table tr td {
+        padding: 5px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10">
+            <center><h4> Add Item  </h4></center>
+        </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'list_all_items' %}"><h5> List Items </h5> </a>
+        </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'logout' %}"><h5> Logout v2</h5> </a>
+        </div>
+    </div>
+    <hr style="border-top: 1px dotted green;">
+
+    {% if messages %}
+    <ul class="messages">
+          {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}<p class="text-danger" >Warning: </p>{% endif %}
+                    <center>{{ message }}</center>
+                </li>
+          {% endfor %}
+    </ul>
+{% endif %}
+
+        <div class="table" style="text-align: left;">
+            <center>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table>
+                    {% for field in form%}
+                        <tr>
+                            <td> <b>{{ field.label }}: </b></td>
+                            <td> {{ field }} </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                    <br>
+                <input type="submit" value="submit"/>
+            </form>
+            </center>
+        </div>
+</div>
+{% endblock %}

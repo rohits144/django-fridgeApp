@@ -1,4 +1,4 @@
-from .forms import RegistrationForm, UserCreationForm
+from .forms import RegistrationForm, UserCreationForm, AddItemForm
 
 from django.shortcuts import render, reverse
 from django.contrib import messages
@@ -103,3 +103,19 @@ def list_all_items(request):
         }
 
         return render(request, template_name="fridgeApp/list_items.html", context=context)
+
+
+def add_item(request):
+    if request.method == "GET":
+        form = AddItemForm()
+        context = {
+            "form": form,
+        }
+        return render(request, template_name="fridgeApp/add_item.html", context=context)
+
+    if request.method == "POST":
+        form = AddItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Item Added")
+            return HttpResponseRedirect(redirect_to=reverse('list_all_items'))

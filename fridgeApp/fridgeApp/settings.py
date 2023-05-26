@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fridgeApp',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -119,4 +120,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'list_items/'
+LOGIN_REDIRECT_URL = '/list_items/'
+LOGOUT_REDIRECT_URL = '/login/'

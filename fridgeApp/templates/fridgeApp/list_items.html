@@ -1,23 +1,54 @@
 {% extends 'fridgeApp/base.html' %}
 
 {% block content %}
-<div class="container">
 
-        {% if messages %}
-                <ul class="messages">
-                 {% for message in messages %}
-                         <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                                        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}<p class="text-danger" >Warning: </p>{% endif %}
-                                                {{ message }}
-                        </li>
-                {% endfor %}
-                </ul>
-        {% endif %}
-        <div class="container">
-                {% for item in items %}
-                    {{ item }}
-                {% endfor %}
+<style>
+    table tr td {
+        padding: 5px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10">
+            <center><h4> List of Items in fridge right now  </h4></center>
         </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'add_item' %}"><h5> Add Item </h5> </a>
+        </div>
+        <div class="col-sm-1" align="right">
+            <a href="{% url 'logout' %}"><h5> Logout v2</h5> </a>
+        </div>
+    </div>
+    <hr style="border-top: 1px dotted green;">
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}<p class="text-danger" >Warning: </p>{% endif %}
+            <center>{{ message }}</center>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="table" style="text-align: left;">
+        <center>
+
+            <table>
+                {% for item in items %}
+                <tr>
+                    <td> <b>{{ item.name }}: </b></td>
+                    <td> {{ item.expiry_date }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <br>
+        </center>
+    </div>
 </div>
+
 {% endblock %}

@@ -99,9 +99,9 @@ def add_user(request):
 def list_all_items(request):
     if request.method == "GET":
         context = {
-            "items": Items.objects.all()
+            "items": Items.objects.all().order_by("-created_on")
         }
-
+        print("items: ", context['items'])
         return render(request, template_name="fridgeApp/list_items.html", context=context)
 
 
@@ -119,3 +119,10 @@ def add_item(request):
             form.save()
             messages.success(request, "Item Added")
             return HttpResponseRedirect(redirect_to=reverse('list_all_items'))
+
+
+def delete_items(request, id):
+    print(id)
+    item = Items.objects.get(id=id)
+    item.delete()
+    return HttpResponseRedirect(redirect_to=reverse("list_all_items"))

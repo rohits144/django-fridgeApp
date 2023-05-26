@@ -5,7 +5,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import register, password_reset, add_user, list_all_items, add_item
+from .views import register, password_reset, add_user, list_all_items, add_item, delete_items
 
 
 urlpatterns = [
@@ -17,7 +17,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('add_user/', add_user, name='add_user'),
     path('list_items/', list_all_items, name='list_all_items'),
-    path('add_item/', add_item, name='add_item')
+    path('add_item/', add_item, name='add_item'),
+    path('delete/<int:id>', delete_items, name='delete')
 ]
 
 if settings.DEBUG:

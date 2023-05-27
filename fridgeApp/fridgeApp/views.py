@@ -4,7 +4,7 @@ from django.shortcuts import render, reverse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime
+import datetime
 import logging
 
 from .models import Items
@@ -99,9 +99,9 @@ def add_user(request):
 def list_all_items(request):
     if request.method == "GET":
         context = {
-            "items": Items.objects.all().order_by("-created_on")
+            "items": Items.objects.all().order_by("-created_on"),
         }
-        print("items: ", context['items'])
+        print([item.days_remaining().days < 4  for item in context["items"]])
         return render(request, template_name="fridgeApp/list_items.html", context=context)
 
 
@@ -122,7 +122,6 @@ def add_item(request):
 
 
 def delete_items(request, id):
-    print(id)
     item = Items.objects.get(id=id)
     item.delete()
     return HttpResponseRedirect(redirect_to=reverse("list_all_items"))

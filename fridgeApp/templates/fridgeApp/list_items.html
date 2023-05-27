@@ -9,7 +9,7 @@
     }
     th {
         height: 40px;
-        padding: 5px;
+        padding: 10px;
         font-weight: bold;
         text-align: left;
         background-color: #cccccc;
@@ -52,10 +52,15 @@
 
             <table>
                     <tr>
-                        <th> Item Name </th> <th> Expiry Date </th>
+                        <th> Item Pic </th> <th> Item Name </th> <th> Expiry Date </th>
                     </tr>
                 {% for item in items %}
                 <tr>
+                    <td>
+                        <div class="profile-img-container">
+                            <img src="{{ item.pic.url }}" class="img-responsive" alt="item pic" height="50" width="50" align="left"/>
+                        </div>
+                    </td>
                     <td> <b>{{ item.name }}: </b></td>
                     {% if item.days_remaining.days < 0 %}
                         <td style="background-color: red" > {{ item.expiry_date }} </td>

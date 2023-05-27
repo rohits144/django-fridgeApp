@@ -16,6 +16,7 @@ class Items(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20)
     expiry_date = models.DateField()
+    pic = models.ImageField(upload_to="items_images", blank=True, null=True, default='abc.jpg')
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

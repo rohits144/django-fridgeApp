@@ -114,12 +114,13 @@ def add_item(request):
         return render(request, template_name="fridgeApp/add_item.html", context=context)
 
     if request.method == "POST":
-        form = AddItemForm(request.POST)
+        form = AddItemForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Item Added")
             return HttpResponseRedirect(redirect_to=reverse('list_all_items'))
-
+        else:
+            print(form.errors)
 
 def delete_items(request, id):
     item = Items.objects.get(id=id)

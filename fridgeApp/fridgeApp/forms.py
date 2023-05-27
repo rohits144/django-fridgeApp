@@ -11,8 +11,9 @@ class RegistrationForm(UserCreationForm):
 
 class AddItemForm(forms.ModelForm):
     expiry_date = forms.DateField(widget=forms.SelectDateWidget)
-    pic = forms.ImageField(allow_empty_file=True)
+    pic = forms.ImageField(allow_empty_file=True, required=False)
 
     class Meta:
         model = Items
-        fields = '__all__'
+        fields = ['name', 'expiry_date', 'pic']
+

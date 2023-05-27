@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+
 from .forms import RegistrationForm, UserCreationForm, AddItemForm
 
 from django.shortcuts import render, reverse
@@ -96,12 +98,13 @@ def add_user(request):
             return HttpResponseRedirect(reverse('add_user'))
 
 
+@login_required
 def list_all_items(request):
     if request.method == "GET":
         context = {
-            "items": Items.objects.all().order_by("-created_on"),
+            "items": Items.objects.filter(created_by=request.user).order_by("-created_on"),
         }
-        print([item.days_remaining().days < 4  for item in context["items"]])
+        print([item.days_remaining().days < 4 for item in context["items"]])
         return render(request, template_name="fridgeApp/list_items.html", context=context)
 
 
@@ -116,11 +119,14 @@ def add_item(request):
     if request.method == "POST":
         form = AddItemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.created_by = request.user
+            obj.save()
             messages.success(request, "Item Added")
             return HttpResponseRedirect(redirect_to=reverse('list_all_items'))
         else:
             print(form.errors)
+
 
 def delete_items(request, id):
     item = Items.objects.get(id=id)
